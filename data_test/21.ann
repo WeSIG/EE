@@ -1,0 +1,4 @@
+T1	Business-Merge-Org 19 21	并购
+T2	Org 0 5	美国“雅虎
+T3	Org 31 38	精诚资讯奇摩站
+E1	Business-Merge-Org:T1 Org:T2 Org:T3

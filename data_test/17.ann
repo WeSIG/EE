@@ -1,0 +1,5 @@
+T1	Personnel-Elect 37 39	当选
+T2	Person 8 12	克雷蒂安
+T3	Position 0 8	加拿大自由党总理
+T4	Time-Within 24 27	星期一
+E1	Personnel-Elect:T1 Person:T2 Position:T3 Time-Within:T4

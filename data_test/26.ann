@@ -1,0 +1,4 @@
+T1	Life-Marry 2 4	婚礼
+T2	Person 9 18	周伟龙和徐玉清夫妇
+T3	Place 0 2	海底
+E1	Life-Marry:T1 Person:T2 Place:T3

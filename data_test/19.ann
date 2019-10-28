@@ -1,0 +1,3 @@
+T1	Conflict-Demonstrate 6 8	抗议
+T2	Entity 0 18	3名进行绝食抗议的土耳其 左派政治犯
+E1	Conflict-Demonstrate:T1 Entity:T2

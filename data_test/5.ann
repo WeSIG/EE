@@ -1,0 +1,4 @@
+T1	Contact-Meet 11 13	谈判
+T2	Entity 0 2	双方
+T3	Time-Within 5 11	7个 多小时
+E1	Contact-Meet:T1 Entity:T2 Time-Within:T3

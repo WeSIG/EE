@@ -1,0 +1,3 @@
+T1	Personnel-End-Position 9 11	辞职
+T2	Person 0 5	艾斯特拉达
+E1	Personnel-End-Position:T1 Person:T2

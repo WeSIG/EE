@@ -1,0 +1,5 @@
+T1	Life-Die 50 51	亡
+T2	Victim 25 29	39万人
+T3	Agent 45 49	自 愿军
+T4	Time-Holds 0 2	3年
+E1	Life-Die:T1 Victim:T2 Agent:T3 Time-Holds:T4

@@ -1,0 +1,4 @@
+T1	Justice-Charge-Indict 12 14	指控
+T2	Defendant 0 8	两名中国人大代表
+T3	Crime 10 12	受贿
+E1	Justice-Charge-Indict:T1 Defendant:T2 Crime:T3

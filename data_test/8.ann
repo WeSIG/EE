@@ -1,0 +1,5 @@
+T1	Life-Injure 33 35	瘫痪
+T2	Victim 0 3	赵世黄
+T3	Place 8 10	大陆
+T4	Time-At-Beginning 3 6	两个月
+E1	Life-Injure:T1 Victim:T2 Place:T3 Time-At-Beginning:T4

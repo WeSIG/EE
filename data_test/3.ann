@@ -1,0 +1,5 @@
+T1	Conflict-Attack 15 19	拳打脚踢
+T2	Attacker 0 2	家属
+T3	Place 8 10	警局
+T4	Target 13 15	嫌犯
+E1	Conflict-Attack:T1 Attacker:T2 Place:T3 Target:T4

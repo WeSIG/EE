@@ -1,0 +1,3 @@
+T1	Transaction-Transfer-Money 22 24	捐献
+T2	Giver 0 4	中国人民
+E1	Transaction-Transfer-Money:T1 Giver:T2

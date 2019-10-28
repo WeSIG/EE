@@ -1,0 +1,3 @@
+T1	Business-Declare-Bankruptcy 0 2	破产
+T2	Org 6 8	我们
+E1	Business-Declare-Bankruptcy:T1 Org:T2

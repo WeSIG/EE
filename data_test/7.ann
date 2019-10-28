@@ -1,0 +1,5 @@
+T1	Justice-Fine 38 40	重罚
+T2	Entity 29 34	无照贩卖的
+T3	Adjudicator 0 6	高雄县卫生局
+T4	Place 0 3	高雄县
+E1	Justice-Fine:T1 Entity:T2 Adjudicator:T3 Place:T4

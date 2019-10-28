@@ -1,0 +1,5 @@
+T1	Transaction-Transfer-Ownership 15 17	卖出
+T2	Artifact 0 2	凶刀
+T3	Seller 7 14	苗丽一家大卖场
+T4	Place 7 9	苗丽
+E1	Transaction-Transfer-Ownership:T1 Artifact:T2 Seller:T3 Place:T4

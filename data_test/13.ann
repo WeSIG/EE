@@ -1,0 +1,6 @@
+T1	Justice-Execute 15 17	枪决
+T2	Person 0 3	成克杰
+T3	Crime 9 11	受贿
+T4	Crime 12 14	贪污
+T5	Time-Within 3 7	今年九月
+E1	Justice-Execute:T1 Person:T2 Crime:T3 Crime:T4 Time-Within:T5

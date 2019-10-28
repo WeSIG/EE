@@ -1,0 +1,4 @@
+T1	Justice-Sentence 24 26	判处
+T2	Defendant 0 8	两名中国人大代表
+T3	Sentence 26 28	死刑
+E1	Justice-Sentence:T1 Defendant:T2 Sentence:T3

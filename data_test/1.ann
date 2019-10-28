@@ -1,0 +1,6 @@
+T1	Justice-Arrest-Jail 12 14	逮捕
+T2	Person 16 21	一名强暴犯
+T3	Place 9 12	台北县
+T4	Agent 0 4	桃源警方
+T5	Time-Within 4 8	昨天深夜
+E1	Justice-Arrest-Jail:T1 Person:T2 Place:T3 Agent:T4 Time-Within:T5

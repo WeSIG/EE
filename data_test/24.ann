@@ -1,0 +1,4 @@
+T1	Justice-Sue 10 12	诉讼
+T2	Adjudicator 21 23	法官
+T3	Plaintiff 0 6	民主党支持者
+E1	Justice-Sue:T1 Adjudicator:T2 Plaintiff:T3

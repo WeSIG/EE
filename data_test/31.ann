@@ -1,0 +1,5 @@
+T1	Justice-Extradite 33 34	到
+T2	Person 15 18	杨光南
+T3	Destination 34 36	澳门
+T4	Agent 0 4	上海公安
+E1	Justice-Extradite:T1 Person:T2 Destination:T3 Agent:T4

@@ -1,0 +1,6 @@
+T1	Personnel-Start-Position 32 34	出任
+T2	Person 17 20	王文阳
+T3	Entity 0 6	红利半 导体
+T4	Position 34 45	上海红利半导体的执行长
+T5	Position 46 50	总 经理
+E1	Personnel-Start-Position:T1 Person:T2 Entity:T3 Position:T4 Position:T5

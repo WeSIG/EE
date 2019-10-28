@@ -1,0 +1,4 @@
+T1	Justice-Release-Parole 14 16	出狱
+T2	Entity 0 4	这名嫌犯
+T3	Crime 6 10	性 侵害
+E1	Justice-Release-Parole:T1 Entity:T2 Crime:T3

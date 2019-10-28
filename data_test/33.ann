@@ -1,0 +1,4 @@
+T1	Personnel-Nominate 5 7	任命
+T2	Person 0 4	这个人选
+T3	Agent 14 16	总统
+E1	Personnel-Nominate:T1 Person:T2 Agent:T3

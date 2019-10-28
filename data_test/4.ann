@@ -1,0 +1,6 @@
+T1	Movement-Transport 10 12	跑到
+T2	Artifact 0 3	朱婉清
+T3	Destination 7 10	洛杉矶
+T4	Origin 12 18	东 岸的纽约
+T5	Time-Within 3 5	目前
+E1	Movement-Transport:T1 Artifact:T2 Destination:T3 Origin:T4 Time-Within:T5

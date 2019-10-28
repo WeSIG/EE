@@ -1,0 +1,4 @@
+T1	Business-Start-Org 32 34	形成
+T2	Org 34 38	几个集团
+T3	Time-Within 0 2	未来
+E1	Business-Start-Org:T1 Org:T2 Time-Within:T3

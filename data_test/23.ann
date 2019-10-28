@@ -1,0 +1,4 @@
+T1	Justice-Appeal 10 12	上诉
+T2	Adjudicator 0 6	佛州最高法院
+T3	Plaintiff 8 10	戈尔
+E1	Justice-Appeal:T1 Adjudicator:T2 Plaintiff:T3

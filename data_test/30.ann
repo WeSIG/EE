@@ -1,0 +1,4 @@
+T1	Justice-Pardon 0 2	特赦
+T2	Defendant 8 30	曾茂兴，苏炳昆还有19名 宗教良心犯共21人
+T3	Time-Starting 32 39	上午8： 00
+E1	Justice-Pardon:T1 Defendant:T2 Time-Starting:T3

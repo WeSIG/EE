@@ -1,0 +1,4 @@
+T1	Contact-Phone-Write 14 18	备忘 录
+T2	Entity 0 2	北韩
+T3	Entity 7 11	韩国政府
+E1	Contact-Phone-Write:T1 Entity:T2 Entity:T3

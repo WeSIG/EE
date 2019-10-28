@@ -1,0 +1,5 @@
+T1	Life-Divorce 8 11	离 婚
+T2	Person 0 14	刚在7月份和员警离 婚a小姐
+T3	Person 6 8	员警
+T4	Time-Within 2 5	7月份
+E1	Life-Divorce:T1 Person:T2 Person:T3 Time-Within:T4

@@ -1,0 +1,5 @@
+T1	Life-Be-Born 10 12	新生
+T2	Person 10 14	新生婴儿
+T3	Place 0 3	安徽省
+T4	Time-Within 4 8	以往六年
+E1	Life-Be-Born:T1 Person:T2 Place:T3 Time-Within:T4

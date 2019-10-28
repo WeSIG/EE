@@ -1,0 +1,4 @@
+T1	Business-End-Org 19 21	关闭
+T2	Org 0 6	我国煤炭行业
+T3	Time-Within 64 66	今年
+E1	Business-End-Org:T1 Org:T2 Time-Within:T3
