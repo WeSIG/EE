@@ -85,7 +85,7 @@ def get_words(doc, bc):
         for idx_sentence in range(len(vec[1])):
             #print('\n',vec[1][idx_sentence])
             for idx_token in range(len(vec[1][idx_sentence])):
-                #print(vec[1][idx_sentence][idx_token],'\t', vec[0][idx_sentence][idx_token][0:5])                
+                #print(vec[1][idx_sentence][idx_token],'\t', vec[0][idx_sentence][idx_token][0:5])
                 if( vec[1][idx_sentence][idx_token].find('[CLS]', 0, 5)==0 ):
                     # [CLS]
                     words.append(vec[1][idx_sentence][idx_token])
@@ -107,7 +107,7 @@ def get_words(doc, bc):
                 elif( vec[1][idx_sentence][idx_token].find('##', 0, 2)<0 ):
                     # Token in BERT table
                     words.append(vec[1][idx_sentence][idx_token])
-                    wordsvec.append(vec[0][idx_sentence][idx_token][0:])                      
+                    wordsvec.append(vec[0][idx_sentence][idx_token][0:])
                     start = doc.text.lower().find(words[-1], spans[-1][0]) + idx_sentence
                     end = start + len(words[-1]) + idx_sentence
                     spans.append([start, end])
@@ -115,7 +115,7 @@ def get_words(doc, bc):
                     if len(str(label))>2:
                         wordslabel.append(label)
                     else:
-                        wordslabel.append(['NULL'])                    
+                        wordslabel.append(['NULL'])
                 else:
                     # Token started with '##' in BERT
                     words[-1] = words[-1] + vec[1][idx_sentence][idx_token][2:]
@@ -135,8 +135,8 @@ def get_embd(sents, bc):
     ''' 
     words = []
     wordsvec = []
-    
-    for str_sent in sents:      
+
+    for str_sent in sents:
         # Embeddings of each sentence/ sequence via BERT.
         print(str_sent)
         vec = bc.encode([str_sent], show_tokens=True)
@@ -144,7 +144,7 @@ def get_embd(sents, bc):
         for idx_sentence in range(len(vec[1])):
             #print('\n',vec[1][idx_sentence])
             for idx_token in range(len(vec[1][idx_sentence])):
-                #print(vec[1][idx_sentence][idx_token],'\t', vec[0][idx_sentence][idx_token][0:5])                
+                #print(vec[1][idx_sentence][idx_token],'\t', vec[0][idx_sentence][idx_token][0:5])
                 if( vec[1][idx_sentence][idx_token].find('[CLS]', 0, 5)==0 ):
                     # [CLS]
                     continue
@@ -209,10 +209,10 @@ def get_events(doc, bc):
 def get_events_in_mention(doc, bc):
     '''get: triggers, embds_triggers, labels_triggers, args, embds_args, labels_args
     '''
-    en_NULL = False
+    en_NULL = True
     events = get_events(doc, bc)
     triggers, embds_triggers, labels_triggers, args, embds_args, labels_args = [], [], [], [], [], []
-    
+
     label_arg_for_each_trig = []
     for index, r in events.iterrows():
         num_trigger_NULL = 0
@@ -230,7 +230,7 @@ def get_events_in_mention(doc, bc):
             triggers.extend([r['args'][0]])
             embds_triggers.append(r['embds_args'][0])
             labels_triggers.extend(['NULL'])
-            
+
         for idx in range(len(r['triggers'])):
             label_arg_for_each_trig.append([])
             for idxarg in range(len(r['args'])):
@@ -263,7 +263,7 @@ def create_base_network(input_dim, nb_classes):
     adam = optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
     adamax = optimizers.Adamax(lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0)
     nadam = optimizers.Nadam(lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=None, schedule_decay=0.004)
-    
+
     N_nodes = input_dim
     r_droupout = 0.05
     model_base = Sequential()
@@ -307,24 +307,24 @@ def fit_on_data(wordsvec='NULL', wordslabel='NULL', model=0, encoder=0, learning
     wordsvec = np.asarray(wordsvec)
     print('samples shape:', wordsvec.shape)
     print('labels number:', len(set(wordslabel)), set(wordslabel))
-    
+
     classesnames = set(wordslabel)
     classweight = dict([(i, 1) for i in range(len(classesnames))])
-    
+
     # encode class values as integers
     #encoder = LabelEncoder()
     #encoder.fit(wordslabel)
     Y_encoder = encoder.transform(wordslabel)    
-    for idx in range(len(classesnames)):
-        classweight[idx] = 10*(1 - float(len(Y_encoder[np.where(Y_encoder==idx)])) / float(len(Y_encoder)))
-        
+    #for idx in range(len(classesnames)):
+    #    classweight[idx] = 10*(1 - float(len(Y_encoder[np.where(Y_encoder==idx)])) / float(len(Y_encoder)))
+
     # convert integers to dummy variables (i.e. one hot encoded)
     Y_encoder = np_utils.to_categorical(Y_encoder)
-    
+
     #X_train, X_test, Y_train, Y_test = train_test_split(wordsvec, Y_encoder, random_state=0)
     X_train, X_test, Y_train, Y_test = wordsvec, wordsvec, Y_encoder, Y_encoder
     #X_train, Y_train  = wordsvec, Y_encoder
-    
+
     # model define
     #input_dim = wordsvec.shape[1]
     #N_classes = len(set(wordslabel))    
@@ -342,7 +342,7 @@ def fit_on_data(wordsvec='NULL', wordslabel='NULL', model=0, encoder=0, learning
                   optimizer=sgd,
                   metrics=['accuracy'])
     #model.summary()
-    
+
     # model training
     start   = time.time()
     his = model.fit(X_train, Y_train,
@@ -406,7 +406,7 @@ def print_all_array(x):
     for i in range(len(x)):
         print([y for y in x[i]])
 
-def generate_confusion_matrix(labels_true, labels_pre, label_set):
+def generate_confusion_matrix(labels_true, labels_pre, label_set, DIR_DATA):
     cnf_matrix = confusion_matrix(labels_true, labels_pre)
     #print(np.asarray(cnf_matrix))
     print_all_array(np.asarray(cnf_matrix))
@@ -415,39 +415,39 @@ def generate_confusion_matrix(labels_true, labels_pre, label_set):
         fig =  plt.figure(figsize=(40,40))
         plot_confusion_matrix(cnf_matrix, classes=label_set)
         plt.show(block = False)
-        fig.savefig('./save/'+ time.asctime()+'-count.jpg')
+        fig.savefig('./save/'+ DIR_DATA +'-count.jpg')
         plt.close()
         fig =  plt.figure(figsize=(40,40))
         plot_confusion_matrix(cnf_matrix, classes=label_set, normalize=True, title='Normalized confusion matrix')
         plt.show(block = False)
-        fig.savefig('./save/'+ time.asctime()+'-norm.jpg')
+        fig.savefig('./save/'+ DIR_DATA +'-norm.jpg')
         plt.close()
-    
-    
-def test_on_data(model, encoder, wordsvec, wordslabel, en_verbose=0):    
+
+
+def test_on_data(model, encoder, wordsvec, wordslabel, DIR_DATA, en_verbose=0):
     print('='*65,'\n>>test the model on given data:')
     # wordsvec from list to array
     wordsvec = np.asarray(wordsvec)
     print('samples: {}, {} labels: {}'.format(wordsvec.shape, len(set(wordslabel)), set(wordslabel)))
-    
+
     # encode class values as integers
     Y_encoder = encoder.transform(wordslabel)
     # convert integers to dummy variables (i.e. one hot encoded)
     Y_encoder = np_utils.to_categorical(Y_encoder)
-    
+
     # model test
     print('>>testing')
     probs = model.predict(wordsvec, verbose=en_verbose)
     print(probs.shape)
-    
+
     idxs = np.argmax(probs, axis=1)
     labels_pre = encoder.inverse_transform(idxs)
     labels_true = wordslabel
     labels = []
     for idx in range(len(set(labels_true))):
         labels.append(encoder.inverse_transform(idx))
-    generate_confusion_matrix(labels_true, labels_pre, labels)
- 
+    generate_confusion_matrix(labels_true, labels_pre, labels, DIR_DATA)
+
     # model eval
     print('>>evaluating')
     #Returns the loss value & metrics values for the model in test mode.
@@ -471,7 +471,7 @@ def label2ann(words, labels_trig, labels_arg, idxT, idxE):
     annE = ''
     set_trigger = set(labels_trig)
     set_args = set(labels_arg)
-    
+
     blank_tokens = [' ']
     for label in set_trigger:
         if label == 'NULL':
@@ -508,14 +508,14 @@ def event_extract(text, model_trigger, encoder_trigger, model_arg, encoder_arg, 
     words, wordsvec = get_embd([text], bc)
     # wordsvec from list to array
     wordsvec = np.asarray(wordsvec)
-      
+
     probs = model_trigger.predict(wordsvec)
     idxs = np.argmax(probs, axis=1)
     labels_trig = encoder_trigger.inverse_transform(idxs)
-      
+
     print(probs.shape, len(labels_trig))
     print([[words[idx], labels_trig[idx]] for idx in np.arange(len(labels_trig))])
-      
+
     labels_arg = []
     idxT = 0
     idxE = 0
@@ -544,14 +544,14 @@ def event_extract_kzg(text, model_trigger, encoder_trigger, model_arg, encoder_a
     words, wordsvec = get_embd([text], bc)
     # wordsvec from list to array
     wordsvec = np.asarray(wordsvec)
-    
+
     trigger_emb = np.asarray(trigger_emb)
     probs = model_trigger.predict(trigger_emb)
     idxs = np.argmax(probs, axis=1)
     labels_trig = encoder_trigger.inverse_transform(idxs)
     pre_trig_labels = labels_trig
-    
-    
+
+
     event_match_strict_count = 0
     event_match_approx_count = 0
     for word_i in range(len(labels_trig)):
@@ -559,14 +559,14 @@ def event_extract_kzg(text, model_trigger, encoder_trigger, model_arg, encoder_a
         #稍作修改以便调试
 #         if pre_trig_labels[word_i] != 'NULL' and pre_trig_labels[word_i] == true_trig_labels[word_i]:
         if pre_trig_labels[word_i] != 'NULL' and pre_trig_labels[word_i] == true_trig_labels[word_i]:
-            
+
             #当true_trig_labels中不止一个trigger时,数清楚预测到的trigger是true_trig_labels中的第几个
             trigger_count = 0
             for word_idx_j in range(word_i):
                 #事实上,这里还要考虑trigger为短语的情况,目前先不考虑,以后再改
                 if true_trig_labels[word_idx_j] != 'NULL':
                     trigger_count += 1
-            
+
             embds_args = []
             for idxarg in range(len(labels_trig)):
                 if labels_trig[idxarg] == 'NULL':
@@ -576,24 +576,24 @@ def event_extract_kzg(text, model_trigger, encoder_trigger, model_arg, encoder_a
             probs = model_arg.predict(embds_args)
             idxs = np.argmax(probs, axis=1)
             pre_arg_label = encoder_arg.inverse_transform(idxs)
-            
+
             true_arg_label = true_arg_labels_list[trigger_count]
-            
-            
+
+
             arg_count = 0 
             for arg_i in range(len(true_arg_label)):
                 if true_arg_label[arg_i] != 'NULL':
                     arg_count +=1
-            
+
             strict_match_mark = True
             for arg_j in range(true_arg_label):
                 if true_arg_label[arg_j] != pre_arg_label[arg_j]:
                     event_match_approx_count += 1
                     strict_match_mark = False
-                
+
             if strict_match_mark:
                 event_match_strict_count += 1
-            
+
     return  event_match_strict_count, event_match_approx_count
 
 
