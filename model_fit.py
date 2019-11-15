@@ -5,7 +5,7 @@ from sklearn.externals import joblib
 from bert_serving.client import BertClient
 from bratreader.repomodel import RepoModel
 from sklearn.preprocessing import LabelEncoder
-from model_com import create_base_network, get_events, fit_on_data, test_on_data, event_extract_kzg, get_events_in_mention
+from model_com import create_base_network, get_events, fit_on_data, test_on_data, get_events_in_mention
 
 from keras import backend as K
 
@@ -16,12 +16,7 @@ def training(DIR_DATA):
     TASK_NAME = DIR_DATA
     NAME_DATA_FILE = TASK_NAME+'_data_import'+'.save'
 
-    # obtain all the files list
-    ANN_FILEs = []
-    DIR_ALL_FILES = os.listdir(DIR_DATA)
-    for file_name in DIR_ALL_FILES:
-        if file_name.split('.')[-1] == 'txt':
-            ANN_FILEs.append(file_name[:-4])
+
 
     DIR_MODEL = './save/'
     file_model_trig = DIR_MODEL + TASK_NAME +'_model_trigger.pkl'
@@ -32,10 +27,17 @@ def training(DIR_DATA):
         args, vec_arg, label_arg = None, None, None
     except:
         corpus = RepoModel(DIR_DATA) # load corpus
+        bc = BertClient(ip='127.0.0.1', port=8701, port_out=8702, show_server_config=True) # bert model as service
+        
+        # obtain all the files list
+        ANN_FILEs = []
+        DIR_ALL_FILES = os.listdir(DIR_DATA)
+        for file_name in DIR_ALL_FILES:
+            if file_name.split('.')[-1] == 'txt':
+                ANN_FILEs.append(file_name[:-4])
         for ANN_FILE in ANN_FILEs:
-            bc = BertClient(ip='127.0.0.1', port=8701, port_out=8702, show_server_config=False) # bert model as service
             doc = corpus.documents[ANN_FILE] # get document with key
-            ttriggers, tvec_trig, tlabel_trig, targs, tvec_arg, tlabel_arg, tlabel_arg_for_each_trig = get_events_in_mention(doc, bc)
+            ttriggers, tvec_trig, tlabel_trig, targs, tvec_arg, tlabel_arg, label_arg_for_each_trig = get_events_in_mention(doc, bc)
             triggers.extend(ttriggers)
             vec_trig.extend(tvec_trig)
             label_trig.extend(tlabel_trig)
@@ -47,6 +49,14 @@ def training(DIR_DATA):
         joblib.dump([triggers, vec_trig, label_trig, args, vec_arg, label_arg], NAME_DATA_FILE)
         args, vec_arg, label_arg = None, None, None
 
+
+    N_batchs =[len(label_trig), 8192, 4096, 2048, 1024, 512, 32, 16, 8, 4, 2, 1]
+    N_batchs =[64, 8]
+    lrs = [0.01]
+    N_trains = 8
+    N_epochs = 4
+    
+    
     print('='*65,'\n>>trigger model training:')
     try:
         model_trig, encoder_trig = joblib.load(file_model_trig)
@@ -59,13 +69,6 @@ def training(DIR_DATA):
         encoder_trig = LabelEncoder()
         encoder_trig.fit(label_trig)
         acc_pre = 0
-
-    N_batchs =[len(label_trig), 8192, 4096, 2048, 1024, 512, 32, 16, 8, 4, 2, 1]
-    N_batchs =[64, 8, 2, 1]
-    lrs = [0.01, 0.001]
-    N_trains = 8
-    N_epochs = 64
-
 
     for N_batch in N_batchs:
         for lr in lrs:
@@ -119,7 +122,9 @@ def training(DIR_DATA):
 
 
 
-DIR_DATAs = ['data_test']
+DIR_DATAs = ['data_military-corpus', 'data_test', 'data_ACE_English', 'data_ACE_Chinese', 'data_ACE']
 for DIR_DATA in DIR_DATAs:
     training(DIR_DATA)
+
+    
 

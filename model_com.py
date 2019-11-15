@@ -209,7 +209,7 @@ def get_events(doc, bc):
 def get_events_in_mention(doc, bc):
     '''get: triggers, embds_triggers, labels_triggers, args, embds_args, labels_args
     '''
-    en_NULL = True
+    en_NULL = False
     events = get_events(doc, bc)
     triggers, embds_triggers, labels_triggers, args, embds_args, labels_args = [], [], [], [], [], []
 
@@ -321,8 +321,8 @@ def fit_on_data(wordsvec='NULL', wordslabel='NULL', model=0, encoder=0, learning
     # convert integers to dummy variables (i.e. one hot encoded)
     Y_encoder = np_utils.to_categorical(Y_encoder)
 
-    #X_train, X_test, Y_train, Y_test = train_test_split(wordsvec, Y_encoder, random_state=0)
-    X_train, X_test, Y_train, Y_test = wordsvec, wordsvec, Y_encoder, Y_encoder
+    X_train, X_test, Y_train, Y_test = train_test_split(wordsvec, Y_encoder, random_state=0)
+    #X_train, X_test, Y_train, Y_test = wordsvec, wordsvec, Y_encoder, Y_encoder
     #X_train, Y_train  = wordsvec, Y_encoder
 
     # model define
@@ -348,7 +348,8 @@ def fit_on_data(wordsvec='NULL', wordslabel='NULL', model=0, encoder=0, learning
     his = model.fit(X_train, Y_train,
                     batch_size=N_batch, epochs=N_epoch,
                     verbose=en_verbose, validation_data=(X_test, Y_test),
-                    class_weight = classweight)
+                    #class_weight = classweight
+                    )
     end     = time.time()
     print('time elapse on training:\t', end - start, 'sec')
     return model, encoder, his
@@ -406,12 +407,12 @@ def print_all_array(x):
     for i in range(len(x)):
         print([y for y in x[i]])
 
-def generate_confusion_matrix(labels_true, labels_pre, label_set, DIR_DATA):
+def generate_confusion_matrix(labels_true, labels_pre, label_set, DIR_DATA, en_verbose):
     cnf_matrix = confusion_matrix(labels_true, labels_pre)
     #print(np.asarray(cnf_matrix))
-    print_all_array(np.asarray(cnf_matrix))
     np.set_printoptions(precision=2)
-    if True:
+    if en_verbose:
+        print_all_array(np.asarray(cnf_matrix))
         fig =  plt.figure(figsize=(40,40))
         plot_confusion_matrix(cnf_matrix, classes=label_set)
         plt.show(block = False)
@@ -428,7 +429,8 @@ def test_on_data(model, encoder, wordsvec, wordslabel, DIR_DATA, en_verbose=0):
     print('='*65,'\n>>test the model on given data:')
     # wordsvec from list to array
     wordsvec = np.asarray(wordsvec)
-    print('samples: {}, {} labels: {}'.format(wordsvec.shape, len(set(wordslabel)), set(wordslabel)))
+    if en_verbose:
+        print('samples: {}, {} labels: {}'.format(wordsvec.shape, len(set(wordslabel)), set(wordslabel)))
 
     # encode class values as integers
     Y_encoder = encoder.transform(wordslabel)
@@ -446,7 +448,7 @@ def test_on_data(model, encoder, wordsvec, wordslabel, DIR_DATA, en_verbose=0):
     labels = []
     for idx in range(len(set(labels_true))):
         labels.append(encoder.inverse_transform(idx))
-    generate_confusion_matrix(labels_true, labels_pre, labels, DIR_DATA)
+    generate_confusion_matrix(labels_true, labels_pre, labels, DIR_DATA, en_verbose)
 
     # model eval
     print('>>evaluating')
