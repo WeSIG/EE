@@ -18,7 +18,7 @@ def training(DIR_DATA):
 
 
 
-    DIR_MODEL = './save/'
+    DIR_MODEL = './save_test/'
     file_model_trig = DIR_MODEL + TASK_NAME +'_model_trigger.pkl'
     file_model_arg = DIR_MODEL + TASK_NAME + '_model_arg.pkl'
     triggers, vec_trig, label_trig, args, vec_arg, label_arg = [], [], [], [], [], []
@@ -122,9 +122,13 @@ def training(DIR_DATA):
 
 
 
-DIR_DATAs = ['data_military-corpus', 'data_test', 'data_ACE_English', 'data_ACE_Chinese', 'data_ACE']
+DIR_DATAs = ['data_test', 'data_military-corpus', 'data_ACE_English', 'data_ACE_Chinese', 'data_ACE']
 for DIR_DATA in DIR_DATAs:
     training(DIR_DATA)
 
     
+
+
+
+
 

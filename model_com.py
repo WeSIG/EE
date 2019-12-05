@@ -16,7 +16,7 @@ from keras import backend as K
 from keras import optimizers
 from keras.utils import np_utils
 from keras.models import Sequential, Model
-from keras.layers import Dense, Dropout, Input, Lambda, Activation
+from keras.layers import Dense, Dropout, Input, Lambda, Activation, Conv1D, Flatten
 from keras.optimizers import SGD, Adam, RMSprop
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
@@ -252,7 +252,7 @@ def get_events_in_mention(doc, bc):
     return triggers, embds_triggers, labels_triggers, args, embds_args, labels_args, label_arg_for_each_trig
 
 
-def create_base_network(input_dim, nb_classes):
+def create_base_network_MLP(input_dim, nb_classes):
     '''Base network to be shared (eq. to feature extraction).
     '''    
     sgd = optimizers.SGD(lr=0.01, clipnorm=1.)
@@ -297,6 +297,64 @@ def create_base_network(input_dim, nb_classes):
     #model_base.load_weights('model_base.h5')
     return model_base
 
+
+
+def dilated_gated_conv1d(seq, dilation_rate=1):
+    """膨胀门卷积（残差式）
+    """
+    dim = K.int_shape(seq)[1]
+    h = Conv1D(1, 3, padding='same', dilation_rate=dilation_rate, input_shape=(dim,1))(seq)
+    def _gate(x):
+        dropout_rate = 0.1
+        s, h = x
+        g, h = h, h
+        g = K.in_train_phase(K.dropout(g, dropout_rate), g)
+        g = K.sigmoid(g)
+        return g * s + (1 - g) * h
+    seq = Lambda(_gate)([seq, h])
+    return seq
+
+def create_base_network(input_dim, nb_classes):
+    '''Base network to be shared (eq. to feature extraction).
+    '''    
+    sgd = optimizers.SGD(lr=0.01, clipnorm=1.)
+    sgd = optimizers.SGD(lr=0.01, momentum=0.05, decay=0.0, nesterov=True)
+    rmsprop = optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0)
+    adagrad = optimizers.Adagrad(lr=0.01, epsilon=None, decay=0.0)
+    adadelta = optimizers.Adadelta(lr=1.0, rho=0.95, epsilon=None, decay=0.0)
+    adam = optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+    adamax = optimizers.Adamax(lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0)
+    nadam = optimizers.Nadam(lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=None, schedule_decay=0.004)
+
+    N_nodes = input_dim
+    r_droupout = 0.05
+    
+    # This returns a tensor
+    inputs = Input(shape=(N_nodes,))
+    t = Lambda(lambda x: K.expand_dims(x, 2))(inputs)
+    t = dilated_gated_conv1d(t, 1)
+    t = dilated_gated_conv1d(t, 2)
+    t = dilated_gated_conv1d(t, 5)
+    t = dilated_gated_conv1d(t, 1)
+    t = dilated_gated_conv1d(t, 2)
+    t = dilated_gated_conv1d(t, 5)
+    t = dilated_gated_conv1d(t, 1)
+    t = dilated_gated_conv1d(t, 2)
+    t = dilated_gated_conv1d(t, 5)
+    t = dilated_gated_conv1d(t, 1)
+    t = dilated_gated_conv1d(t, 1)
+    t = dilated_gated_conv1d(t, 1)
+    print(K.int_shape(t))
+    t = Flatten()(t)
+    predictions = Dense(nb_classes, activation='softmax')(t)
+    
+    # This creates a model that includes
+    model = Model(inputs=inputs, outputs=predictions)
+    model.compile(loss='categorical_crossentropy',
+                  optimizer=sgd,
+                  metrics=['accuracy'])
+    #model.summary()
+    return model
 
 def fit_on_data(wordsvec='NULL', wordslabel='NULL', model=0, encoder=0, learning_rate = 0.001, N_batch = 4, N_epoch = 16, en_verbose = 0):
     '''
