@@ -1,10 +1,11 @@
-#model fit
+#model test
 import os
 import numpy as np
 from sklearn.externals import joblib
 from bert_serving.client import BertClient
 from bratreader.repomodel import RepoModel
 from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
 from model_com import create_base_network, get_events, fit_on_data, test_on_data, get_events_in_mention
 
 
@@ -40,18 +41,20 @@ def testing(DIR_DATA):
         joblib.dump([triggers, vec_trig, label_trig, args, vec_arg, label_arg], NAME_DATA_FILE)
 
     
+    X_train, X_test, Y_train, Y_test = train_test_split(vec_trig, label_trig, random_state=0)
     print('='*65,'\n>>trigger model testing:')
     model_trig, encoder_trig = joblib.load(file_model_trig)
-    acc = test_on_data(model_trig, encoder_trig, vec_trig, label_trig, DIR_DATA, en_verbose = 0)
+    acc = test_on_data(model_trig, encoder_trig, vec_trig, label_trig, DIR_DATA, en_verbose = 1)
     print('triggers extraction accuracy: {}'.format(acc))
-
+    
+    X_train, X_test, Y_train, Y_test = train_test_split(vec_arg, label_arg, random_state=0)
     print('='*65,'\n>>argument model testing:')
     model_arg, encoder_arg = joblib.load(file_model_arg)
-    acc = test_on_data(model_arg, encoder_arg, vec_arg, label_arg, DIR_DATA, en_verbose = 0)
+    acc = test_on_data(model_arg, encoder_arg, vec_arg, label_arg, DIR_DATA, en_verbose = 1)
     print('arguements extraction accuracy: {}'.format(acc))
 
 
-DIR_DATAs = ['data_military-corpus','data_test', 'data_ACE_Chinese','data_ACE_English','data_ACE'] #'data_test', 'data_ACE_English', 'data_ACE_Chinese'
+DIR_DATAs = ['data_ACE_Chinese']
 for DIR_DATA in DIR_DATAs:
     testing(DIR_DATA)
 

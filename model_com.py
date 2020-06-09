@@ -298,7 +298,6 @@ def create_base_network_MLP(input_dim, nb_classes):
     return model_base
 
 
-
 def dilated_gated_conv1d(seq, dilation_rate=1):
     """膨胀门卷积（残差式）
     """
@@ -322,7 +321,7 @@ def create_base_network(input_dim, nb_classes):
     rmsprop = optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0)
     adagrad = optimizers.Adagrad(lr=0.01, epsilon=None, decay=0.0)
     adadelta = optimizers.Adadelta(lr=1.0, rho=0.95, epsilon=None, decay=0.0)
-    adam = optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+    adam = optimizers.Adam(lr=1e-5, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
     adamax = optimizers.Adamax(lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0)
     nadam = optimizers.Nadam(lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=None, schedule_decay=0.004)
 
@@ -334,13 +333,25 @@ def create_base_network(input_dim, nb_classes):
     t = Lambda(lambda x: K.expand_dims(x, 2))(inputs)
     t = dilated_gated_conv1d(t, 1)
     t = dilated_gated_conv1d(t, 2)
-    t = dilated_gated_conv1d(t, 5)
+    t = dilated_gated_conv1d(t, 4)
     t = dilated_gated_conv1d(t, 1)
     t = dilated_gated_conv1d(t, 2)
-    t = dilated_gated_conv1d(t, 5)
+    t = dilated_gated_conv1d(t, 4)
     t = dilated_gated_conv1d(t, 1)
     t = dilated_gated_conv1d(t, 2)
-    t = dilated_gated_conv1d(t, 5)
+    t = dilated_gated_conv1d(t, 4)
+    t = dilated_gated_conv1d(t, 1)
+    t = dilated_gated_conv1d(t, 2)
+    t = dilated_gated_conv1d(t, 4)
+    t = dilated_gated_conv1d(t, 1)
+    t = dilated_gated_conv1d(t, 2)
+    t = dilated_gated_conv1d(t, 4)
+    t = dilated_gated_conv1d(t, 1)
+    t = dilated_gated_conv1d(t, 2)
+    t = dilated_gated_conv1d(t, 4)
+    t = dilated_gated_conv1d(t, 1)
+    t = dilated_gated_conv1d(t, 2)
+    t = dilated_gated_conv1d(t, 4)
     t = dilated_gated_conv1d(t, 1)
     t = dilated_gated_conv1d(t, 1)
     t = dilated_gated_conv1d(t, 1)
@@ -351,9 +362,9 @@ def create_base_network(input_dim, nb_classes):
     # This creates a model that includes
     model = Model(inputs=inputs, outputs=predictions)
     model.compile(loss='categorical_crossentropy',
-                  optimizer=sgd,
+                  optimizer=adam,
                   metrics=['accuracy'])
-    #model.summary()
+    model.summary()
     return model
 
 def fit_on_data(wordsvec='NULL', wordslabel='NULL', model=0, encoder=0, learning_rate = 0.001, N_batch = 4, N_epoch = 16, en_verbose = 0):
@@ -363,8 +374,6 @@ def fit_on_data(wordsvec='NULL', wordslabel='NULL', model=0, encoder=0, learning
     print('='*65,'\n>>fit the model on given data, learning_rate:{}, N_batch:{}, N_epoch:{}'.format(learning_rate, N_batch, N_epoch))
     # wordsvec from list to array
     wordsvec = np.asarray(wordsvec)
-    print('samples shape:', wordsvec.shape)
-    print('labels number:', len(set(wordslabel)), set(wordslabel))
 
     classesnames = set(wordslabel)
     classweight = dict([(i, 1) for i in range(len(classesnames))])
@@ -380,6 +389,9 @@ def fit_on_data(wordsvec='NULL', wordslabel='NULL', model=0, encoder=0, learning
     Y_encoder = np_utils.to_categorical(Y_encoder)
 
     X_train, X_test, Y_train, Y_test = train_test_split(wordsvec, Y_encoder, random_state=0)
+    X_train, X_test, Y_train, Y_test = wordsvec, wordsvec, Y_encoder, Y_encoder
+    print('samples train:', X_train.shape)
+    print('samples val:', X_test.shape)
     #X_train, X_test, Y_train, Y_test = wordsvec, wordsvec, Y_encoder, Y_encoder
     #X_train, Y_train  = wordsvec, Y_encoder
 
@@ -392,12 +404,12 @@ def fit_on_data(wordsvec='NULL', wordslabel='NULL', model=0, encoder=0, learning
     #rmsprop = optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0)
     adagrad = optimizers.Adagrad(lr=0.01, epsilon=None, decay=0.0)
     adadelta = optimizers.Adadelta(lr=1.0, rho=0.95, epsilon=None, decay=0.0)
-    adam = optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+    adam = optimizers.Adam(lr=learning_rate, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=True)
     adamax = optimizers.Adamax(lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0)
     nadam = optimizers.Nadam(lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=None, schedule_decay=0.004)
     rmsprop = optimizers.RMSprop(lr=learning_rate, rho=0.9, epsilon=None, decay=0)
     model.compile(loss='categorical_crossentropy',
-                  optimizer=sgd,
+                  optimizer=adam,
                   metrics=['accuracy'])
     #model.summary()
 
@@ -498,12 +510,24 @@ def test_on_data(model, encoder, wordsvec, wordslabel, DIR_DATA, en_verbose=0):
     # model test
     print('>>testing')
     probs = model.predict(wordsvec, verbose=en_verbose)
-    print(probs.shape)
+    print("probs shape:", probs.shape)
 
     idxs = np.argmax(probs, axis=1)
     labels_pre = encoder.inverse_transform(idxs)
     labels_true = wordslabel
     labels = []
+    n_all = 0
+    n_right = 0
+    for idx in range(len(labels_pre)):
+        l = labels_pre[idx]
+        if not (l == 'NULL'):
+            n_all +=1
+            if l == labels_true[idx]:
+                n_right +=1
+                #print(l, labels_true[idx])
+    print("acc witout NULL:", len(labels_pre), n_all, n_right, n_right/n_all)
+    print("set lable true:", set(labels_true))     
+    print("set lable pred:", set(labels_pre))              
     for idx in range(len(set(labels_true))):
         labels.append(encoder.inverse_transform(idx))
     generate_confusion_matrix(labels_true, labels_pre, labels, DIR_DATA, en_verbose)
@@ -565,7 +589,9 @@ def label2ann(words, labels_trig, labels_arg, idxT, idxE):
     return ann, idxT, idxE
 
 def event_extract(text, model_trigger, encoder_trigger, model_arg, encoder_arg, bc):
+    t1 = time.time()
     words, wordsvec = get_embd([text], bc)
+    t2 = time.time()
     # wordsvec from list to array
     wordsvec = np.asarray(wordsvec)
 
@@ -575,6 +601,8 @@ def event_extract(text, model_trigger, encoder_trigger, model_arg, encoder_arg, 
 
     print(probs.shape, len(labels_trig))
     print([[words[idx], labels_trig[idx]] for idx in np.arange(len(labels_trig))])
+    
+    t3 = time.time()
 
     labels_arg = []
     idxT = 0
@@ -595,6 +623,9 @@ def event_extract(text, model_trigger, encoder_trigger, model_arg, encoder_arg, 
         print(probs.shape, len(labels_arg))
         print([[words[idx]+'->'+ words[idx_arg], labels_arg[idx_arg]] for idx_arg in np.arange(len(labels_arg))])
         ann, idxT, idxE = label2ann(words, labels_trig, labels_arg, idxT, idxE)
+        
+    t4 = time.time()
+    print('time of embedding: %.6f; time of trigger extraction:%.6f; time of arguments extraction:%.6f'%(t2-t1, t3-t2, t4-t3))
     return ann
 
 
